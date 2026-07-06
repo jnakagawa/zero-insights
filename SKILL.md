@@ -12,7 +12,7 @@ ranked HTML report with live prices and copy-pasteable commands.
 
 Three guarantees, non-negotiable:
 
-1. **$0 to run.** `zero search` and `zero get` are free; `zero fetch` spends real money.
+1. **Free to run.** `zero search` and `zero get` are free; `zero fetch` spends real money.
    **Never run `zero fetch` during a zero-insights pass.** The report *recommends* calls; it
    never makes them.
 2. **Local only.** Transcripts, extracts, and the report stay on this machine. Do not upload
@@ -109,7 +109,7 @@ Each finding card must contain:
 
 After the cards, include the **"No capability yet"** section (frictions Zero doesn't cover —
 useful signal), and a short methodology footer: sessions scanned, window, searches run, and the
-sentence "This report cost $0 to generate — searches are free; no capabilities were called."
+sentence "This report cost nothing to generate — searches are free; no capabilities were called."
 
 Finally, summarize the top 3 findings in chat in plain prose with the report path.
 
