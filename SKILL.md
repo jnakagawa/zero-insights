@@ -88,8 +88,20 @@ into the main context.
    the best 1–2 capabilities, preferring **healthy** (`✓`) and rated ones; record name, price,
    protocol (x402/mpp), health, and rating exactly as printed. If nothing relevant comes back,
    move the candidate to the "no capability yet" list — that's a real finding too.
-4. **Rank.** Order findings by `recurrence × plausible time saved`, breaking ties toward cheap,
-   healthy capabilities. A weekly chore beats a one-off curiosity every time.
+4. **Estimate impact.** For each surviving candidate, quantify the benefit — this is what
+   turns a findings list into a consultancy report:
+   - **Benefit lever** (pick one): `time to ship` · `friction removed` · `output quality` ·
+     `capability unlocked` (a feature that never shipped without it — e.g. a dropped feature
+     is a *loss*, not a time cost; say so).
+   - **Cost today**: a directional time estimate per occurrence, derived ONLY from observable
+     evidence in the transcript — steps taken, tools switched, turns spent on the detour.
+     Round aggressively (5/10/15/30 min buckets) and never present more precision than the
+     evidence supports.
+   - **Cost with Zero**: this pass's live price × plausible monthly volume (from recurrence).
+   - Record the "today" workflow as 3–5 numbered steps and the "with Zero" workflow as 1–2 —
+     the before/after is the most persuasive element of the report.
+5. **Rank.** Order findings by `recurrence × impact`, breaking ties toward cheap, healthy
+   capabilities. A weekly chore beats a one-off curiosity every time.
 
 ## Phase 3 — Report
 
@@ -97,21 +109,35 @@ Generate a self-contained HTML report from `assets/report-template.html` (inline
 external requests, light/dark aware) and write it to
 `~/.claude/zero-insights/run-<date>/report.html`, then open it (`open` on macOS).
 
-Each finding card must contain:
+The report is a consultancy deliverable, in this order:
 
-- **What happened** — project, date(s), recurrence count, and the one-line story of the manual
-  step or blocked moment.
-- **What Zero has today** — capability name, price, protocol, health/rating, as returned by
-  this pass's live search.
-- **Try it** — the exact `zero search "<query>"` line that surfaced it, plus a
-  `zero get <n> --formatted` follow-up. Never include a `zero fetch` line with a real body —
-  the user should inspect before calling.
+1. **Executive summary** — 2–3 sentences (total friction observed, its cost today, the cost
+   to replace it with Zero, the single top recommendation) above a 4-tile KPI row:
+   opportunities confirmed · est. time lost in the window · est. cost to replace ·
+   capabilities unblocked. Keep the "estimates are directional" note visible.
+2. **Investment case** — one table, ranked: opportunity · benefit lever · times seen ·
+   cost today · with Zero · capability health, with a total row.
+3. **Finding cards**, ranked. Each card: one-line title + benefit-lever chip; project,
+   date(s), recurrence; a one-paragraph story; a **Today / With Zero** before-after pair
+   (numbered steps + per-occurrence cost on each side); the live-verified capability line
+   (name, price, protocol, health/rating from THIS pass); a short verbatim **evidence**
+   quote with session reference; the **try-it** block — the exact `zero search "<query>"`
+   that surfaced it plus `zero get <n> --formatted`. Never include a `zero fetch` line with
+   a real body — the user should inspect before calling.
+4. **Action plan** — three sequenced items: *this week* (free/instant swaps), *next*
+   (needs a small code or workflow change), *watch list* (the "no capability yet" frictions,
+   worth re-searching next month).
+5. **Methodology footer** — sessions/projects/window, corpus size raw → distilled, search
+   count, how time estimates were derived, and the sentence "This report cost nothing to
+   generate — searches are free; no capabilities were called."
 
-After the cards, include the **"No capability yet"** section (frictions Zero doesn't cover —
-useful signal), and a short methodology footer: sessions scanned, window, searches run, and the
-sentence "This report cost nothing to generate — searches are free; no capabilities were called."
+Credibility guardrails: label every time figure as a directional estimate; keep "declined ≠
+missed" precision (an offer the user turned down is not a finding); note when the user later
+adopted a capability themselves (adoption lag is evidence the audit works, and honesty beats
+inflation everywhere).
 
-Finally, summarize the top 3 findings in chat in plain prose with the report path.
+Finally, summarize the executive summary and top 3 findings in chat in plain prose with the
+report path.
 
 ## Guardrails (recap)
 
