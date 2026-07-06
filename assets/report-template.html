@@ -1,0 +1,72 @@
+<!--
+  zero-insights report template.
+  Fill every {{PLACEHOLDER}}, repeat the .finding card block per finding, then delete
+  these comments. Keep it self-contained: inline CSS only, no external requests, no JS
+  required. Ranked list, not a dashboard — most valuable finding first.
+-->
+<title>Zero Insights — {{DATE}}</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1f; --muted: #6b6b76; --card: #f6f6f8;
+    --border: #e3e3e9; --accent: #4f46e5; --good: #157a3d; --warn: #9a6700;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #101014; --fg: #ececf1; --muted: #9a9aa5; --card: #1a1a21;
+            --border: #2a2a33; --accent: #8b85f4; --good: #4ade80; --warn: #eab308; }
+  }
+  :root[data-theme="dark"]  { --bg: #101014; --fg: #ececf1; --muted: #9a9aa5; --card: #1a1a21;
+                              --border: #2a2a33; --accent: #8b85f4; --good: #4ade80; --warn: #eab308; }
+  :root[data-theme="light"] { --bg: #ffffff; --fg: #1a1a1f; --muted: #6b6b76; --card: #f6f6f8;
+                              --border: #e3e3e9; --accent: #4f46e5; --good: #157a3d; --warn: #9a6700; }
+  body { background: var(--bg); color: var(--fg);
+         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         max-width: 780px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  .sub { color: var(--muted); margin: 0 0 2.5rem; }
+  .finding { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+             padding: 1.25rem 1.4rem; margin: 0 0 1.25rem; }
+  .finding h2 { font-size: 1.05rem; margin: 0 0 .5rem; }
+  .rank { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: .5rem; }
+  .meta { color: var(--muted); font-size: .85rem; margin: 0 0 .75rem; }
+  .recurrence { color: var(--warn); font-weight: 600; }
+  .cap { margin: .5rem 0; }
+  .cap .price { color: var(--good); font-weight: 600; }
+  .cap .health { font-size: .85rem; color: var(--muted); }
+  pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+        padding: .7rem .9rem; overflow-x: auto; font-size: .85rem; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  section.nohit ul { color: var(--muted); }
+  footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--border);
+           margin-top: 3rem; padding-top: 1rem; }
+</style>
+
+<h1>Zero Insights</h1>
+<p class="sub">{{SESSIONS}} sessions · {{WINDOW_DAYS}}-day window · generated {{DATE}} · ranked by recurrence × impact</p>
+
+<!-- Repeat this card per finding, best first. -->
+<div class="finding">
+  <h2><span class="rank">#{{N}}</span>{{ONE_LINE_TITLE}}</h2>
+  <p class="meta">{{PROJECT}} · {{DATES}} · <span class="recurrence">seen {{RECURRENCE}}×</span></p>
+  <p>{{WHAT_HAPPENED_AND_WHAT_YOU_DID_INSTEAD}}</p>
+  <div class="cap">
+    <strong>{{CAPABILITY_NAME}}</strong> — <span class="price">{{PRICE}}</span>
+    <span class="health">· {{PROTOCOL}} · {{HEALTH_AND_RATING}}</span>
+  </div>
+  <pre><code>zero search "{{QUERY_THAT_SURFACED_IT}}"
+zero get {{RESULT_N}} --formatted</code></pre>
+</div>
+
+<section class="nohit">
+  <h2>No capability yet</h2>
+  <p class="sub">Real frictions Zero doesn't cover today — worth re-searching next month.</p>
+  <ul>
+    <li>{{FRICTION}} — searched <code>"{{QUERY}}"</code>, no relevant results</li>
+  </ul>
+</section>
+
+<footer>
+  Scanned {{SESSIONS}} sessions across {{PROJECTS}} projects ({{WINDOW_DAYS}} days) ·
+  {{SEARCH_COUNT}} live <code>zero search</code> queries ·
+  This report cost $0 to generate — searches are free; no capabilities were called.
+  All analysis ran locally; nothing left this machine.
+</footer>
