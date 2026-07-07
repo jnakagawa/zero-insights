@@ -86,8 +86,11 @@ into the main context.
 3. **Verify live.** For every candidate, run 1–3 `zero search` queries (start from the
    category's seed queries, then refine with the candidate's specifics). From the results keep
    the best 1–2 capabilities, preferring **healthy** (`✓`) and rated ones; record name, price,
-   protocol (x402/mpp), health, and rating exactly as printed. If nothing relevant comes back,
-   move the candidate to the "no capability yet" list — that's a real finding too.
+   protocol (x402/mpp), health, and rating exactly as printed. Also record each kept
+   capability's `slug` (`zero search --json`, or the `slug` field of `zero get <n>`) — its
+   public page is `https://www.zero.xyz/c/<slug>`; curl-check that URL returns 200 so every
+   link in the report is live. If nothing relevant comes back, move the candidate to the
+   "no capability yet" list — that's a real finding too.
 4. **Estimate impact.** For each surviving candidate, quantify the benefit — this is what
    turns a findings list into a consultancy report:
    - **Benefit lever** (pick one): `time to ship` · `friction removed` · `output quality` ·
@@ -119,11 +122,18 @@ The report is a consultancy deliverable, in this order:
    cost today · with Zero · capability health, with a total row.
 3. **Finding cards**, ranked. Each card: one-line title + benefit-lever chip; project,
    date(s), recurrence; a one-paragraph story; a **Today / With Zero** before-after pair
-   (numbered steps + per-occurrence cost on each side); the live-verified capability line
-   (name, price, protocol, health/rating from THIS pass); a short verbatim **evidence**
-   quote with session reference; the **try-it** block — the exact `zero search "<query>"`
-   that surfaced it plus `zero get <n> --formatted`. Never include a `zero fetch` line with
-   a real body — the user should inspect before calling.
+   (numbered steps + per-occurrence cost on each side, with the template's step-count dots);
+   the live-verified capability line (name, price, protocol, health/rating from THIS pass) —
+   **every capability name is a link** to its verified `https://www.zero.xyz/c/<slug>` page,
+   styled with the template's `a.cap` highlight; a short verbatim **evidence** quote with
+   session reference; the **try-it** block — the exact `zero search "<query>"` that surfaced
+   it plus `zero get <n> --formatted`. Never include a `zero fetch` line with a real body —
+   the user should inspect before calling.
+
+   Graphics are part of the format, kept honest: the investment table's inline magnitude
+   bars (single accent hue, 2px per estimated minute, text label always beside the bar) and
+   the before/after step dots (count label mandatory). Anything beyond these — actual
+   charts — must follow the dataviz skill's rules; never add a chart as decoration.
 4. **Action plan** — three sequenced items: *this week* (free/instant swaps), *next*
    (needs a small code or workflow change), *watch list* (the "no capability yet" frictions,
    worth re-searching next month).

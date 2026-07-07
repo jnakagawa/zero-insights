@@ -68,6 +68,16 @@
   pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
         padding: .7rem .9rem; overflow-x: auto; font-size: .85rem; }
   code { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  a.cap { color: var(--accent); font-weight: 600; text-decoration: none; }
+  a.cap:hover { text-decoration: underline; }
+  a.cap::after { content: " ↗"; font-size: .8em; }
+  .bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--accent);
+         vertical-align: middle; margin-right: .45rem; }
+  .steps { margin-top: .45rem; }
+  .steps .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+                background: var(--muted); margin-right: 3px; }
+  .steps.zero .dot { background: var(--accent); }
+  .steps .n { color: var(--muted); font-size: .75rem; margin-left: .3rem; }
   .plan { margin: 0; padding-left: 1.2rem; }
   .plan li { margin-bottom: .5rem; }
   .plan .when { font-weight: 600; }
@@ -99,9 +109,13 @@ in your sessions (steps taken, tools switched, turns spent) — see methodology.
 <div class="tablewrap"><table>
   <tr><th>Opportunity</th><th>Benefit lever</th><th class="num">Seen</th>
       <th class="num">Cost today</th><th class="num">With Zero</th><th>Capability health</th></tr>
-  <!-- one row per finding, ranked; repeat -->
+  <!-- One row per finding, ranked; repeat. The .bar span is an inline magnitude bar for
+       the time estimate: width = 2px per estimated minute (single accent hue, text label
+       always beside it — never color/length alone). Omit the bar when the cost isn't a
+       time (e.g. "feature unshipped"), or pair it with the time portion only. -->
   <tr><td>{{SHORT_NAME}}</td><td>{{LEVER}}</td><td class="num">{{N}}×</td>
-      <td class="num">{{TIME_OR_LOSS}}</td><td class="num">{{PRICE}}</td><td>{{HEALTH}}</td></tr>
+      <td class="num"><span class="bar" style="width:{{MINUTES×2}}px"></span>{{TIME_OR_LOSS}}</td>
+      <td class="num">{{PRICE}}</td><td>{{HEALTH}}</td></tr>
   <tr class="total"><td>Total</td><td></td><td></td>
       <td class="num">{{TOTAL_TODAY}}</td><td class="num">{{TOTAL_ZERO}}</td><td></td></tr>
 </table></div>
@@ -117,13 +131,20 @@ in your sessions (steps taken, tools switched, turns spent) — see methodology.
   <div class="beforeafter">
     <div class="ba"><div class="label">Today</div>
       <ol><li>{{STEP}}</li><li>{{STEP}}</li></ol>
+      <!-- one .dot per step; the count label is mandatory (never dots alone) -->
+      <div class="steps"><span class="dot"></span><span class="dot"></span><span
+        class="n">{{K}} steps</span></div>
       <div class="cost">{{EST_TIME_OR_LOSS_PER_OCCURRENCE}}</div></div>
     <div class="ba"><div class="label">With Zero</div>
       <ol><li>{{ONE_OR_TWO_STEPS}}</li></ol>
+      <div class="steps zero"><span class="dot"></span><span class="n">1 step</span></div>
       <div class="cost">{{PRICE_AND_TIME}}</div></div>
   </div>
-  <p><strong>{{CAPABILITY_NAME}}</strong> — {{PRICE}} · {{PROTOCOL}} ·
-     {{HEALTH_AND_RATING}}<span class="chip free">{{ONLY_IF_FREE: Free}}</span></p>
+  <!-- Every capability name links to its public page: https://www.zero.xyz/c/{{SLUG}}.
+       Get the slug from `zero get <n>` (field: slug) during Phase 2 and curl-check the
+       page returns 200 before linking. -->
+  <p><a class="cap" href="https://www.zero.xyz/c/{{SLUG}}">{{CAPABILITY_NAME}}</a> —
+     {{PRICE}} · {{PROTOCOL}} · {{HEALTH_AND_RATING}}<span class="chip free">{{ONLY_IF_FREE: Free}}</span></p>
   <p class="evidence">Evidence: "{{SHORT_VERBATIM_QUOTE}}" — {{SESSION_REF}}</p>
   <pre><code>zero search "{{QUERY_THAT_SURFACED_IT}}"
 zero get {{RESULT_N}} --formatted   # match by name after your search</code></pre>
