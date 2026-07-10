@@ -1,91 +1,108 @@
 <!--
-  zero-insights report template — consultancy format.
-  Fill every {{PLACEHOLDER}}, repeat the repeatable blocks (KPI tiles are fixed at 4;
-  .finding cards, table rows, and action-plan items repeat per finding), then delete
+  zero-insights report template — consultancy format, "house style" skin.
+  Fill every {{PLACEHOLDER}}, repeat the repeatable blocks (KPI cells are fixed at 4;
+  .finding sections, table rows, and action-plan items repeat per finding), then delete
   these comments. Self-contained: inline CSS only, no external requests, no JS.
+
+  The skin is deliberately print-like and light-only (paper white, navy ink, electric-blue
+  accent, serif display headings) — do NOT add a dark mode; the single editorial look is
+  the design. Numbers use text ink; the blue is reserved for structure (rules, links, bars,
+  dots, rank numerals).
 
   Impact numbers are DIRECTIONAL ESTIMATES — derive them from observable evidence
   (steps/turns/tool-switches in the transcript), round aggressively, and keep the
-  "how estimates were made" line in the methodology footer. Never present an estimate
-  with more precision than its evidence supports.
+  "how estimates were made" line in the methodology footer.
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zero Insights — {{DATE}}</title>
 <style>
   :root {
-    --bg: #ffffff; --fg: #1a1a1f; --muted: #6b6b76; --card: #f6f6f8;
-    --border: #e3e3e9; --accent: #4f46e5; --good: #157a3d;
+    --paper: #ffffff; --ink: #051c2c; --muted: #5f6b7a;
+    --hairline: #d9dde3; --panel: #f4f6f8; --blue: #2251ff; --navy: #051c2c;
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #101014; --fg: #ececf1; --muted: #9a9aa5; --card: #1a1a21;
-            --border: #2a2a33; --accent: #8b85f4; --good: #4ade80; }
-  }
-  :root[data-theme="dark"]  { --bg: #101014; --fg: #ececf1; --muted: #9a9aa5; --card: #1a1a21;
-                              --border: #2a2a33; --accent: #8b85f4; --good: #4ade80; }
-  :root[data-theme="light"] { --bg: #ffffff; --fg: #1a1a1f; --muted: #6b6b76; --card: #f6f6f8;
-                              --border: #e3e3e9; --accent: #4f46e5; --good: #157a3d; }
-  body { background: var(--bg); color: var(--fg);
-         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-         max-width: 820px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
-  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
-  h2 { font-size: 1.15rem; margin: 2.5rem 0 .75rem; }
-  .sub { color: var(--muted); margin: 0 0 1.5rem; }
-  .summary { font-size: 1.05rem; margin: 0 0 1.25rem; }
+  body { background: var(--paper); color: var(--ink);
+         font: 16px/1.65 "Helvetica Neue", Arial, -apple-system, sans-serif;
+         max-width: 840px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+  .kicker { letter-spacing: .18em; text-transform: uppercase; font-size: .72rem;
+            color: var(--blue); font-weight: 700; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 2.1rem; font-weight: 400;
+       margin: .35rem 0 .75rem; }
+  .titlerule { height: 3px; width: 56px; background: var(--navy); margin: 0 0 1.25rem; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 400;
+       margin: 3rem 0 .9rem; }
+  .sub { color: var(--muted); margin: 0 0 2rem; font-size: .9rem; }
+  .summary { font-family: Georgia, "Times New Roman", serif; font-size: 1.12rem;
+             line-height: 1.7; margin: 0 0 1.75rem; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-          gap: .75rem; margin: 0 0 .5rem; }
-  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-         padding: .9rem 1rem; }
-  .kpi .label { color: var(--muted); font-size: .8rem; }
-  .kpi .value { font-size: 1.7rem; font-weight: 600; line-height: 1.2; margin-top: .15rem; }
+          border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
+          margin: 0 0 .6rem; }
+  .kpi { padding: 1.1rem 1.2rem; border-left: 1px solid var(--hairline); }
+  .kpi:first-child { border-left: none; padding-left: 0; }
+  .kpi .label { color: var(--muted); font-size: .72rem; letter-spacing: .08em;
+                text-transform: uppercase; font-weight: 600; }
+  .kpi .value { font-family: Georgia, "Times New Roman", serif; font-size: 1.9rem;
+                line-height: 1.25; margin-top: .2rem; }
   .kpi .note { color: var(--muted); font-size: .75rem; margin-top: .15rem; }
   .estnote { color: var(--muted); font-size: .8rem; margin: 0 0 1rem; }
-  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .exhibit { letter-spacing: .14em; text-transform: uppercase; font-size: .7rem;
+             color: var(--muted); font-weight: 700; margin: 2.75rem 0 .3rem; }
+  .exhibit + h2 { margin-top: 0; }
+  .tablewrap { overflow-x: auto; border-top: 2px solid var(--navy);
+               border-bottom: 1px solid var(--hairline); }
   table { border-collapse: collapse; width: 100%; font-size: .9rem; }
-  th { text-align: left; color: var(--muted); font-weight: 600; }
-  th, td { padding: .55rem .8rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { text-align: left; color: var(--muted); font-weight: 600; font-size: .72rem;
+       letter-spacing: .08em; text-transform: uppercase; }
+  th, td { padding: .6rem .8rem; border-bottom: 1px solid var(--hairline);
+           white-space: nowrap; }
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  tr.total td { font-weight: 600; border-top: 2px solid var(--border); }
-  .finding { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-             padding: 1.25rem 1.4rem; margin: 0 0 1.25rem; }
-  .finding h3 { font-size: 1.05rem; margin: 0 0 .4rem; }
-  .rank { color: var(--accent); margin-right: .5rem; }
+  tr.total td { font-weight: 700; border-top: 2px solid var(--navy); }
+  .finding { border: 1px solid var(--hairline); border-top: 3px solid var(--navy);
+             border-radius: 2px; padding: 1.4rem 1.5rem; margin: 0 0 1.5rem;
+             background: var(--paper); }
+  .finding h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem;
+                font-weight: 400; margin: 0 0 .45rem; }
+  .rank { color: var(--blue); font-weight: 700; margin-right: .5rem; }
   .meta { color: var(--muted); font-size: .85rem; margin: 0 0 .75rem; }
-  .chip { display: inline-block; border: 1px solid var(--border); border-radius: 999px;
-          padding: 0 .6rem; font-size: .75rem; color: var(--muted); margin-left: .4rem; }
-  .chip.free { color: var(--good); border-color: var(--good); }
-  .beforeafter { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: .75rem 0; }
+  .chip { display: inline-block; font-size: .68rem; letter-spacing: .1em;
+          text-transform: uppercase; font-weight: 700; color: var(--muted);
+          margin-left: .6rem; }
+  .chip.free { color: var(--blue); }
+  .beforeafter { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: .9rem 0; }
   @media (max-width: 640px) { .beforeafter { grid-template-columns: 1fr; } }
-  .ba { background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-        padding: .7rem .9rem; font-size: .9rem; }
-  .ba .label { font-size: .75rem; font-weight: 600; color: var(--muted);
-               text-transform: uppercase; letter-spacing: .04em; }
-  .ba ol { margin: .35rem 0 0 1.1rem; padding: 0; }
-  .ba .cost { margin-top: .5rem; font-weight: 600; }
-  .evidence { color: var(--muted); font-size: .85rem; border-left: 3px solid var(--border);
-              padding-left: .75rem; margin: .75rem 0; }
-  pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  .ba { background: var(--panel); border: 1px solid var(--hairline); border-radius: 2px;
+        padding: .8rem 1rem; font-size: .9rem; }
+  .ba .label { font-size: .68rem; font-weight: 700; color: var(--muted);
+               text-transform: uppercase; letter-spacing: .1em; }
+  .ba ol { margin: .4rem 0 0 1.1rem; padding: 0; }
+  .ba .cost { margin-top: .55rem; font-weight: 700; }
+  .evidence { color: var(--muted); font-size: .85rem; border-left: 2px solid var(--navy);
+              padding-left: .8rem; margin: .8rem 0; font-style: italic; }
+  pre { background: var(--panel); border: 1px solid var(--hairline); border-radius: 2px;
         padding: .7rem .9rem; overflow-x: auto; font-size: .85rem; }
   code { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-  a.cap { color: var(--accent); font-weight: 600; text-decoration: none; }
+  a.cap { color: var(--blue); font-weight: 600; text-decoration: none; }
   a.cap:hover { text-decoration: underline; }
   a.cap::after { content: " ↗"; font-size: .8em; }
-  .bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--accent);
+  .bar { display: inline-block; height: 8px; border-radius: 0; background: var(--blue);
          vertical-align: middle; margin-right: .45rem; }
   .steps { margin-top: .45rem; }
   .steps .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
                 background: var(--muted); margin-right: 3px; }
-  .steps.zero .dot { background: var(--accent); }
+  .steps.zero .dot { background: var(--blue); }
   .steps .n { color: var(--muted); font-size: .75rem; margin-left: .3rem; }
   .plan { margin: 0; padding-left: 1.2rem; }
-  .plan li { margin-bottom: .5rem; }
-  .plan .when { font-weight: 600; }
-  footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--border);
-           margin-top: 3rem; padding-top: 1rem; }
+  .plan li { margin-bottom: .6rem; }
+  .plan li::marker { color: var(--blue); font-weight: 700; }
+  .plan .when { font-weight: 700; }
+  footer { color: var(--muted); font-size: .8rem; border-top: 1px solid var(--hairline);
+           margin-top: 3.5rem; padding-top: 1rem; }
 </style>
 
+<p class="kicker">Workflow capability audit</p>
 <h1>Zero Insights</h1>
+<div class="titlerule"></div>
 <p class="sub">{{SESSIONS}} sessions · {{WINDOW_DAYS}}-day window · generated {{DATE}} ·
 analysis ran locally at no cost</p>
 
@@ -105,14 +122,14 @@ costs today, what replacing it with Zero costs, and the single top recommendatio
 <p class="estnote">Time figures are directional estimates derived from the visible detours
 in your sessions (steps taken, tools switched, turns spent) — see methodology.</p>
 
+<p class="exhibit">Exhibit 1</p>
 <h2>The investment case</h2>
 <div class="tablewrap"><table>
   <tr><th>Opportunity</th><th>Benefit lever</th><th class="num">Seen</th>
       <th class="num">Cost today</th><th class="num">With Zero</th><th>Capability health</th></tr>
-  <!-- One row per finding, ranked; repeat. The .bar span is an inline magnitude bar for
-       the time estimate: width = 2px per estimated minute (single accent hue, text label
-       always beside it — never color/length alone). Omit the bar when the cost isn't a
-       time (e.g. "feature unshipped"), or pair it with the time portion only. -->
+  <!-- One row per finding, ranked. The .bar span is an inline magnitude bar for the time
+       estimate: width = 2px per estimated minute (electric blue, text label always beside
+       it — never color/length alone). Omit the bar when the cost isn't a time. -->
   <tr><td>{{SHORT_NAME}}</td><td>{{LEVER}}</td><td class="num">{{N}}×</td>
       <td class="num"><span class="bar" style="width:{{MINUTES×2}}px"></span>{{TIME_OR_LOSS}}</td>
       <td class="num">{{PRICE}}</td><td>{{HEALTH}}</td></tr>
@@ -122,7 +139,7 @@ in your sessions (steps taken, tools switched, turns spent) — see methodology.
 
 <h2>Findings</h2>
 
-<!-- Repeat this card per finding, best first. LEVER is one of:
+<!-- Repeat this section per finding, best first. LEVER is one of:
      time to ship · friction removed · output quality · capability unlocked -->
 <div class="finding">
   <h3><span class="rank">#{{N}}</span>{{ONE_LINE_TITLE}}<span class="chip">{{LEVER}}</span></h3>
@@ -161,6 +178,7 @@ zero get {{RESULT_N}} --formatted   # match by name after your search</code></pr
   Methodology: scanned {{SESSIONS}} sessions across {{PROJECTS}} projects ({{WINDOW_DAYS}} days,
   {{RAW_SIZE}} raw → {{DISTILLED_SIZE}} distilled); {{SEARCH_COUNT}} live <code>zero search</code>
   queries; result numbers reflect this pass — re-run the search and match by capability name.
+  Capability links point to zero.xyz pages verified reachable (HTTP 200) at generation time.
   Time estimates are directional, derived from observable detours (steps, tool switches, turns);
   costs use prices returned this pass. This report cost nothing to generate — searches are free;
   no capabilities were called. All analysis ran locally; nothing left this machine.

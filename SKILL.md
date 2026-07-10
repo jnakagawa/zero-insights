@@ -109,7 +109,8 @@ into the main context.
 ## Phase 3 — Report
 
 Generate a self-contained HTML report from `assets/report-template.html` (inline CSS, no
-external requests, light/dark aware) and write it to
+external requests; the skin is deliberately print-like and light-only — paper white, navy
+ink, serif display headings — do not add a dark mode) and write it to
 `~/.claude/zero-insights/run-<date>/report.html`, then open it (`open` on macOS).
 
 The report is a consultancy deliverable, in this order:
