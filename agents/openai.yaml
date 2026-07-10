@@ -1,0 +1,4 @@
+interface:
+  display_name: "Zero Insights"
+  short_description: "Find missed Zero opportunities in recent tasks"
+  default_prompt: "Use $zero-insights to audit my recent tasks for workflows Zero could improve."
