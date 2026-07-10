@@ -3,7 +3,7 @@
 Like Claude Code's `/insights`, but with one lens: **where could
 [Zero](https://www.zero.xyz) have done this for you?**
 
-A Claude Code skill that scans your recent session transcripts for workflow friction —
+A Codex and Claude Code skill that scans your recent task transcripts for workflow friction —
 manual errands, "I can't do that" moments, external-tool detours — matches each against
 Zero's capability catalog, and generates a ranked HTML report with live prices and
 copy-pasteable `zero` commands.
@@ -17,16 +17,24 @@ recognition.
 
 ## Install
 
+Codex:
+
+```bash
+git clone https://github.com/jnakagawa/zero-insights ~/.codex/skills/zero-insights
+```
+
+Claude Code:
+
 ```bash
 git clone https://github.com/jnakagawa/zero-insights ~/.claude/skills/zero-insights
 ```
 
-Requires Claude Code with the [Zero plugin](https://www.zero.xyz) (or standalone
+Requires Codex or Claude Code with the [Zero plugin](https://www.zero.xyz) (or standalone
 `@zeroxyz/cli`) installed and authenticated.
 
 ## Use
 
-In any Claude Code session:
+In Codex, invoke `$zero-insights` or ask "run Zero Insights". In Claude Code:
 
 ```
 /zero-insights                # last 30 days, all projects
@@ -44,9 +52,10 @@ plus a "no capability yet" section for frictions Zero doesn't cover (yet).
 
 ## How it works
 
-1. **Extract** — `scripts/extract_transcripts.py` distills raw transcripts under
-   `~/.claude/projects/` (huge, mostly tool noise) into compact conversation-only text:
-   user prompts + assistant text, sidechains dropped, obvious secrets redacted.
+1. **Extract** — the host-specific extractor distills raw transcripts under
+   `~/.codex/sessions` plus `~/.codex/archived_sessions`, or `~/.claude/projects/`, into
+   compact conversation-only text: user prompts + assistant text, tool noise dropped,
+   obvious secrets redacted.
 2. **Scan** — subagents fan out over the extracts hunting *friction events*, guided by the
    transcript signals in `references/taxonomy.md`.
 3. **Match & verify** — findings are deduped across sessions (recurrence is the strongest
@@ -66,10 +75,11 @@ plus a "no capability yet" section for frictions Zero doesn't cover (yet).
 ## Layout
 
 ```
-SKILL.md                        # the workflow Claude follows
-references/taxonomy.md          # the long-tail capability lens (the load-bearing file)
-scripts/extract_transcripts.py  # transcript → compact extract distiller (stdlib only)
-assets/report-template.html     # self-contained report skeleton, light/dark aware
+SKILL.md                            # workflow for Codex and Claude Code
+references/taxonomy.md              # long-tail capability lens (the load-bearing file)
+scripts/extract_transcripts.py      # Claude transcript distiller (stdlib only)
+scripts/extract_codex_transcripts.py # Codex task → compact extract distiller (stdlib only)
+assets/report-template.html         # self-contained report skeleton
 ```
 
 ## Keeping the taxonomy fresh

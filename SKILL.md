@@ -1,6 +1,6 @@
 ---
 name: zero-insights
-description: Audit recent Claude Code sessions for moments where a Zero capability could have replaced manual work — ephemeral sandboxes, domain purchase, email/SMS, scraping, image generation, and other paid capabilities agents rarely think to search for. Scans local transcripts, confirms every match with a live (free) zero search, and generates a ranked HTML report. Use when the user runs /zero-insights or asks "where could I have used Zero", "audit my workflows for Zero", or wants /insights-style analysis focused on Zero.
+description: Audit recent Codex or Claude Code tasks for moments where a Zero capability could have replaced manual work — ephemeral sandboxes, domain purchase, email/SMS, scraping, image generation, and other paid capabilities agents rarely think to search for. Scans local transcripts, confirms every match with a live (free) zero search, and generates a ranked HTML report. Use when the user invokes $zero-insights or /zero-insights, asks "where could I have used Zero", "audit my workflows for Zero", or wants an insights-style analysis focused on Zero.
 ---
 
 # Zero Insights
@@ -23,26 +23,38 @@ Three guarantees, non-negotiable:
 
 ## Arguments
 
-`/zero-insights [days] [project-filter]` — both optional.
+`$zero-insights [days] [project-filter]` in Codex, or `/zero-insights [days] [project-filter]`
+in Claude Code — both arguments are optional.
 
 - `days`: lookback window, default **30**.
-- `project-filter`: substring to restrict which `~/.claude/projects/<dir>` directories are
-  scanned (e.g. `stackify`). Default: all projects.
+- `project-filter`: substring to restrict Claude project directories or Codex task working
+  directories (e.g. `stackify`). Default: all projects.
 
 ## Phase 0 — Preflight
 
 1. Resolve the `zero` CLI per the zero skill's rules (`command -v zero`, then `$ZERO_RUNNER`,
    then `~/.zero/runtime/bin/zero`). Confirm identity with `zero auth whoami`. If Zero isn't
    available or authenticated, stop and tell the user — don't improvise auth.
-2. Create a work directory: `~/.claude/zero-insights/run-<YYYY-MM-DD>/` with an `extracts/`
-   subfolder.
+2. Detect the host from available local state. Use `${CODEX_HOME:-~/.codex}/zero-insights/run-<YYYY-MM-DD>/`
+   in Codex and `~/.claude/zero-insights/run-<YYYY-MM-DD>/` in Claude Code. Create an
+   `extracts/` subfolder. If both histories exist, audit the host currently running the skill
+   unless the user explicitly requests the other one.
 3. Read `references/taxonomy.md` (relative to this skill's base directory) — it is the
    recognition lens for Phase 1 and the seed-query source for Phase 2.
 
 ## Phase 1 — Extract and scan
 
-**Extract.** Run the bundled extractor to distill raw transcripts (huge, mostly tool noise)
-into compact conversation-only text files (`<skill-dir>` = this skill's base directory):
+Ignore the current Zero Insights invocation when identifying findings. Installation,
+transcript extraction, authentication checks, Zero searches, model or CLI configuration
+errors, and report generation performed for this audit are audit overhead, not evidence of a
+missed historical workflow opportunity. The current task may appear in Codex's live JSONL
+history while the audit is running.
+
+**Extract.** Run the host-specific bundled extractor to distill raw transcripts (huge, mostly
+tool noise) into compact conversation-only text files (`<skill-dir>` = this skill's base
+directory).
+
+Claude Code:
 
 ```bash
 python3 <skill-dir>/scripts/extract_transcripts.py \
@@ -51,13 +63,22 @@ python3 <skill-dir>/scripts/extract_transcripts.py \
   [--filter <project-substring>]
 ```
 
-It writes one `.txt` per session (user prompts + assistant text only, secrets redacted,
-sidechains dropped) plus an `index.tsv`, and prints a JSON summary. If the summary shows zero
-sessions, report that and stop.
+Codex (active and archived tasks are scanned and deduplicated by task id):
 
-**Scan.** Read the extracts looking for **friction events** — moments a Zero capability could
-have absorbed. The taxonomy's "transcript signals" define what to look for; the recurring
-shapes are:
+```bash
+python3 <skill-dir>/scripts/extract_codex_transcripts.py \
+  --days 30 \
+  --out ${CODEX_HOME:-$HOME/.codex}/zero-insights/run-<date>/extracts \
+  [--filter <cwd-substring>]
+```
+
+It writes one `.txt` per session/task (user prompts + assistant text only, secrets redacted,
+tool noise and injected host context dropped) plus an `index.tsv`, and prints a JSON summary.
+If the summary shows zero sessions/tasks, report that and stop.
+
+**Scan.** Read only the extract files listed in the current `index.tsv`, looking for **friction
+events** — moments a Zero capability could have absorbed. The taxonomy's "transcript signals"
+define what to look for; the recurring shapes are:
 
 - The assistant said it **couldn't** do something, or told the user to go do it themselves on
   some website or external tool.
@@ -110,8 +131,8 @@ into the main context.
 
 Generate a self-contained HTML report from `assets/report-template.html` (inline CSS, no
 external requests; the skin is deliberately print-like and light-only — paper white, navy
-ink, serif display headings — do not add a dark mode) and write it to
-`~/.claude/zero-insights/run-<date>/report.html`, then open it (`open` on macOS).
+ink, serif display headings — do not add a dark mode) and write it beside the extracts in the
+host-specific run directory, then open it (`open` on macOS).
 
 The report is a consultancy deliverable, in this order:
 
